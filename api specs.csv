@@ -1,0 +1,43 @@
+PARAMETER,API QUERY STRING,SECONDARY API CALL,TERNARY CALL,SUPPORTED BY THE DATA API,REQUIREMENTS,MISSING FIELD,CAN GET THE MISSING FIELD?
+,,,,,,,
+views (by video),search?order=viewCount&type=videos,videos?part=statistics&id=<video id>,,yes,none,none,n/a
+views (per channel),search?order=viewCount&type=channels,channels?id=<channel id(s)>&part=statistics **not implemented (channel ids are not yet implemented),,yes,channel id,id,yes
+channel subscribers,search?order=viewCount&type=channels,channels?id=<channel id(s)>&part=statistics **not implemented,,yes,channel id,id,yes
+earnings (per channel),search?order=viewCount&type=channels,channels?id=<channel id(s)>&part=statistics **not implemented,,no,"channel id, mathematical formula",id,yes
+earnings (by video),search?order=viewCount&type=videos,videos?part=statistics&id=<video id>,,no,"video id, mathematical formula",id,yes
+growth (channel subscribers),search?order=viewCount&type=channels,channels?id=<channel id(s)>&part=statistics **not implemented,,no,"channel id, data with past subscriber count, current subscriber count",past subscriber count,no (requires DB record)
+"growth (by video, by views)",search?order=viewCount&type=channels,videos?part=statistics&id=<video id>,,no,"video id, data with past view count, current view count",past view count,no (requires DB record)
+growth (earnings),search?order=viewCount&type=<channels or videos>,<videos or channels>?part=statistics&id=<video id or channel id>,,no,"id, count, mathematical formula",all,no (requires DB record)
+,,,,,,,
+views (by video) > categories,"videoCategories?regionCode=<regional code, or country name>",search?order=viewCount&videoCategoryId=<category id>,videos?part=statistics&id=<video id>,yes,category id,id,yes
+views (by video) > location,search?order=viewCount&regionCode=<regional code>,videos?part=statistics&id=<video id>,,yes,regional code (or country name),regional code,yes
+views (by video) > keyword,search?order=viewCount&q=<keyword>,videos?part=statistics&id=<video id>,,yes,keyword,none,n/a
+,,,,,,,
+views (per channel) > categories,guideCategories?,channels?id=<channel id(s)>&part=statistics **not implemented,,yes,category id,id,yes
+views (per channel) > location,guideCategories?regionCode=<regional code>,channels?id=<channel id(s)>&part=statistics **not implemented,,yes,regional code (or country name),regional code,yes
+views (per keyword) > keyword,"n/a (If I understand the project requirement here: this isn’t possible. You can search videos, and possibly channels by keyword, but it is not possible to search for just keyword, or views. Views is not a valid top level order for the api logic. Search is top level, and it’s results are ordered by view counts. Any name in a query string that is followed by a ‘?’ is the logical hierarchical parent.)",,,no,n/a,type,no
+,,,,,,,
+subscribers,cannot search the api from subscribers; can only get sub count from a channel,,,,,,
+,,,,,,,
+"{adds today, this week, this month or custom time frame to all parameter searches}",search?publishedBefore=<end date>&publishedAfter=<start date>,,,,,,
+,,,,,,,
+"(earnings (per channel) taken from channel view count)
+earnings (per channel)      > category
+earnings (per channel)      > location
+earnings (per channel)      > keyword (??)
+
+(earnings (by video) taken from video views)
+earnings (by video)         > category
+earnings (by video)         > location
+earnings (by video)         > keyword (??)
+
+(growth (subscriberes) uses data from susbcriber count)
+growth (subscribers)        > category
+growth (subscribers)        > location
+growth (subscribers)        > keyword (??)
+
+(growth (by video, by views) uses data from video count)
+growth (by video, by views) > category
+growth (by video, by views) > location
+growth (by video, by views) > keyword (??)
+growth (by video, by views) >","these should be internal, application methods; not a part of the api. Some require a database. There is an “estimate revenue” method, in the api module. It currently isn’t doing anything, but is the model for calculating earnings. Any api request that can get operative data (view counts, in this particular case) can calculate an estimated earnings. This includes video searches, and channel searches.",,,,,,
